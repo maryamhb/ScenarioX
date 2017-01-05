@@ -13,11 +13,14 @@ However, Professor Peach has himself been arrested by the police for his lewd ac
 
 
 
+
 Objectives:
 
 1) work out how the scrambling is done by recording your own voice and analysing the scrambled message produced by the scrambling program “The scrambler file” written in the protected Matlab code.
 
 2) design and build a digital real-time audio descrambler to work out what the secret message is which will be made available on Thursday.  
+
+
 
 
 
