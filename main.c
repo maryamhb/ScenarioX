@@ -22,36 +22,29 @@ static long temp_ADC = 0;
 static volatile float sine[50];
 /*-------------------------------------------Filter Implementation---------------------------------------------*/
 
-// 8kHz Bandstop Buttterworth Filter Coefficients
-static float bandstop_g = 0.9873701369842;
-static float bandstop_num[3] = {0.9873701369842, -1.058453023, 0.9873701369842};
-static float bandstop_den[3] = {1, -1.058453022724, 0.9747402739684};
-
-float bandstop_buf[3] = {0,0,0};
+// 8kHz Bandstop Butterworth Filter Coefficients from MATLAB
+static float gain = 0.9875889380;
+static float num[3] = { 1, -1.07173820, 1}; //numerators
+static float den[3] = { 1, -1.05843680, 0.975177876}; //denominators
+float buffer[3] = {0,0,0}; //buffer implementation
 
 void update_buffer(float *w){
-    
-    w[0] = w[1];              //First buffer value replaced by second value
-    w[1] = w[2];              //Second buffer value replaced by third value
-    
+    w[0] = w[1];	//First buffer value replaced by the second
+    w[1] = w[2];	//Second buffer value replaced by the third
 }
 
+//filter function, where a->numerators, b->denominators, w->past outputs (buffer)
 float filter(float x, float *w, float *b, float *a){
-    
-    w[2] = x - (a[1] * w[1]) - (a[2] * w[0]);                     //Last value of bandstop_buf is changed to (input) - (2nd denominator * 2nd of bandstop_buf value) - (3rd denominator * 1st bandstop_buf value)
-    float y = (b[0] * w[2]) + (b[1] * w[1]) + (b[2] * w[0]);      //Output is equal to (first numerator * last bandstop_buf) + (second numerator * second bandstop_buf) + (third numerator * first bandstop_buf)
-    
+    w[2] = x - (a[1] * w[1]) - (a[2] * w[0]); //last buffer value
+    float y = (b[0] * w[2]) + (b[1] * w[1]) + (b[2] * w[0]); 
     return y;
-    
 }
 
 float bandstop(float input){
+    update_buffer(buffer); //Update the buffer values (first and second)
+    float output = filter(input, buffer, num, den); //Update the third value of the buffer and acquire final output
     
-    update_buffer(bandstop_buf); //Update the first and second values of the buffer
-    float output = filter(input, bandstop_buf, bandstop_num, bandstop_den);   //Update the third value of the buffer and acquire final output
-    
-    return output * bandstop_g;  //Return output multiplied by buffer gain
-    
+    return output * gain;	//Return output multiplied by buffer gain
 }
 
 /*-------------------------------------------------------------------------------------------------*/
