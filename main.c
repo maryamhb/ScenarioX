@@ -22,7 +22,7 @@ static long temp_ADC = 0;
 static volatile float sine[50];
 /*-------------------------------------------Filter Implementation---------------------------------------------*/
 
-// 8kHz Bandstop Chebyshev Filter Coefficients
+// 8kHz Bandstop Buttterworth Filter Coefficients
 static float bandstop_g = 0.9873701369842;
 static float bandstop_num[3] = {0.9873701369842, -1.058453023, 0.9873701369842};
 static float bandstop_den[3] = {1, -1.058453022724, 0.9747402739684};
